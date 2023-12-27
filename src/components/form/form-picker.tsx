@@ -1,23 +1,28 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { Check, Loader2 } from 'lucide-react'
-import Image from 'next/image'
 import Link from 'next/link'
+import Image from 'next/image'
+import { Check, Loader2 } from 'lucide-react'
 
-import { unsplash } from '@/lib/unsplash'
-import { useFormStatus } from '../../../react-dom-shim'
-import { FormErrors } from './form-errors'
+import { useEffect, useState } from 'react'
+
 import { cn } from '@/lib/utils'
+import { unsplash } from '@/lib/unsplash'
+import { defaultImages } from '@/constants/images'
 
-type FormPickerProps = {
+import { FormErrors } from './form-errors'
+import { useFormStatus } from '../../../react-dom-shim'
+
+interface FormPickerProps {
   id: string
   errors?: Record<string, string[] | undefined>
 }
 
-const FormPicker = ({ id, errors }: FormPickerProps) => {
+export const FormPicker = ({ id, errors }: FormPickerProps) => {
   const { pending } = useFormStatus()
-  const [images, setImages] = useState<Array<Record<string, any>>>([])
+
+  const [images, setImages] =
+    useState<Array<Record<string, any>>>(defaultImages)
   const [isLoading, setIsLoading] = useState(true)
   const [selectedImageId, setSelectedImageId] = useState(null)
 
@@ -37,7 +42,7 @@ const FormPicker = ({ id, errors }: FormPickerProps) => {
         }
       } catch (error) {
         console.log(error)
-        setImages([])
+        setImages(defaultImages)
       } finally {
         setIsLoading(false)
       }
@@ -75,6 +80,7 @@ const FormPicker = ({ id, errors }: FormPickerProps) => {
               name={id}
               className="hidden"
               checked={selectedImageId === image.id}
+              readOnly
               disabled={pending}
               value={`${image.id}|${image.urls.thumb}|${image.urls.full}|${image.links.html}|${image.user.name}`}
             />
@@ -103,5 +109,3 @@ const FormPicker = ({ id, errors }: FormPickerProps) => {
     </div>
   )
 }
-
-export default FormPicker

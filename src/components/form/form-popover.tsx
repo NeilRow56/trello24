@@ -16,7 +16,7 @@ import { Button } from '../ui/button'
 
 import { useAction } from '@/hooks/use-actions'
 import { createBoard } from '@/actions/create-board'
-import FormPicker from './form-picker'
+import { FormPicker } from './form-picker'
 
 interface FormPopoverProps {
   children: React.ReactNode
