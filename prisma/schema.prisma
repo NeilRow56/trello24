@@ -15,12 +15,15 @@ datasource db {
 
 model Board {
  id              String @id @default(auto()) @map("_id") @db.ObjectId
- title         String
+  orgId         String  
+  title         String
+  imageId       String
+  imageThumbUrl String 
+  imageFullUrl  String
+  imageLinkHTML String 
+  imageUserName String 
+  
  
-
-
-
-
  createdAt     DateTime @default(now())
  updatedAt     DateTime @updatedAt
 }
