@@ -1,6 +1,6 @@
 import { Board } from '@prisma/client'
 import BoardTitleForm from './BoardTitleForm'
-import BoardOptions from './BoardOptions'
+import { BoardOptions } from './BoardOptions'
 
 interface BoardNavbarProps {
   data: Board
