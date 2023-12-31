@@ -9,6 +9,7 @@ import { useAction } from '@/hooks/use-actions'
 
 import { toast } from 'sonner'
 import { updateList } from '@/actions/update-list'
+import ListOptions from './ListOptions'
 
 type ListHeaderProps = {
   data: List
@@ -97,6 +98,8 @@ const ListHeader = ({ data }: ListHeaderProps) => {
           {title}
         </div>
       )}
+
+      <ListOptions data={data} onAddCard={() => {}} />
     </div>
   )
 }
