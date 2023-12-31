@@ -9,7 +9,7 @@ import { useAction } from '@/hooks/use-actions'
 
 import { toast } from 'sonner'
 import { updateList } from '@/actions/update-list'
-import ListOptions from './ListOptions'
+import { ListOptions } from './ListOptions'
 
 type ListHeaderProps = {
   data: List
@@ -77,8 +77,14 @@ const ListHeader = ({ data }: ListHeaderProps) => {
     <div className="flex items-start justify-between gap-x-2 px-2 pt-2 text-sm font-semibold">
       {isEditing ? (
         <form action={handleSubmit} ref={formRef} className="flex-1 px-[2px]">
-          <input hidden id="id" name="id" value={data.id} />
-          <input hidden id="boardId" name="boardId" value={data.boardId} />
+          <input readOnly hidden id="id" name="id" value={data.id} />
+          <input
+            readOnly
+            hidden
+            id="boardId"
+            name="boardId"
+            value={data.boardId}
+          />
           <FormInput
             ref={inputRef}
             onBlur={onBlur}

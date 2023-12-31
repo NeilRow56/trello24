@@ -82,7 +82,7 @@ const ListForm = (props: Props) => {
             className="h-7 border-transparent px-2 py-1 text-sm font-medium transition hover:border-input focus:border-input"
             placeholder="Enter list title..."
           />
-          <input hidden value={params.boardId} name="boardId" />
+          <input readOnly hidden value={params.boardId} name="boardId" />
           <div className="flex items-center gap-x-1">
             <FormSubmit>Add list</FormSubmit>
             <Button onClick={disableEditing} size="sm" variant="ghost">
