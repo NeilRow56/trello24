@@ -4,6 +4,11 @@ import { ElementRef, useRef, useState } from 'react'
 import { useEventListener } from 'usehooks-ts'
 
 import { List } from '@prisma/client'
+import { FormInput } from '@/components/form/form-input'
+import { useAction } from '@/hooks/use-actions'
+
+import { toast } from 'sonner'
+import { updateList } from '@/actions/update-list'
 
 type ListHeaderProps = {
   data: List
@@ -28,6 +33,37 @@ const ListHeader = ({ data }: ListHeaderProps) => {
     setIsEditing(false)
   }
 
+  const { execute, fieldErrors } = useAction(updateList, {
+    onSuccess: (data) => {
+      toast.success(`Renamed to "${data.title}"`)
+      setTitle(data.title)
+      disableEditing()
+    },
+    onError: (error) => {
+      toast.error(error)
+    },
+  })
+
+  const handleSubmit = (formData: FormData) => {
+    const title = formData.get('title') as string
+    const id = formData.get('id') as string
+    const boardId = formData.get('boardId') as string
+
+    if (title === data.title) {
+      return disableEditing()
+    }
+
+    execute({
+      title,
+      id,
+      boardId,
+    })
+  }
+
+  const onBlur = () => {
+    formRef.current?.requestSubmit()
+  }
+
   const onKeyDown = (e: KeyboardEvent) => {
     if (e.key === 'Escape') {
       formRef.current?.requestSubmit()
@@ -39,7 +75,20 @@ const ListHeader = ({ data }: ListHeaderProps) => {
   return (
     <div className="flex items-start justify-between gap-x-2 px-2 pt-2 text-sm font-semibold">
       {isEditing ? (
-        <p>Form</p>
+        <form action={handleSubmit} ref={formRef} className="flex-1 px-[2px]">
+          <input hidden id="id" name="id" value={data.id} />
+          <input hidden id="boardId" name="boardId" value={data.boardId} />
+          <FormInput
+            ref={inputRef}
+            onBlur={onBlur}
+            errors={fieldErrors}
+            id="title"
+            placeholder="Enter list title.."
+            defaultValue={title}
+            className="h-7 truncate border-transparent bg-transparent px-[7px] py-1 text-sm font-medium transition hover:border-input focus:border-input focus:bg-white"
+          />
+          <button type="submit" hidden />
+        </form>
       ) : (
         <div
           onClick={enableEditing}
