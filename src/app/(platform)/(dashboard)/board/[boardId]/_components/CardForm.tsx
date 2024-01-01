@@ -1,9 +1,14 @@
 'use client'
 
+import { toast } from 'sonner'
 import { forwardRef, useRef, ElementRef, KeyboardEventHandler } from 'react'
 import { useParams } from 'next/navigation'
-import { Button } from '@/components/ui/button'
+import { useOnClickOutside, useEventListener } from 'usehooks-ts'
 import { Plus, X } from 'lucide-react'
+
+import { useAction } from '@/hooks/use-actions'
+import { createCard } from '@/actions/create-card'
+import { Button } from '@/components/ui/button'
 import { FormTextarea } from '@/components/form/FormTextarea'
 import { FormSubmit } from '@/components/form/form-submit'
 
@@ -19,18 +24,55 @@ export const CardForm = forwardRef<HTMLTextAreaElement, CardFormProps>(
     const params = useParams()
     const formRef = useRef<ElementRef<'form'>>(null)
 
+    const { execute, fieldErrors } = useAction(createCard, {
+      onSuccess: (data) => {
+        toast.success(`Card "${data.title}" created`)
+        formRef.current?.reset()
+      },
+      onError: (error) => {
+        toast.error(error)
+      },
+    })
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        disableEditing()
+      }
+    }
+
+    useOnClickOutside(formRef, disableEditing)
+    useEventListener('keydown', onKeyDown)
+
+    const onTextareakeyDown: KeyboardEventHandler<HTMLTextAreaElement> = (
+      e
+    ) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault()
+        formRef.current?.requestSubmit()
+      }
+    }
+
+    const onSubmit = (formData: FormData) => {
+      const title = formData.get('title') as string
+      const listId = formData.get('listId') as string
+      const boardId = params.boardId as string
+
+      execute({ title, listId, boardId })
+    }
+
     if (isEditing) {
       return (
         <form
           ref={formRef}
-          action={() => {}}
+          action={onSubmit}
           className="m-1 space-y-4 px-1 py-0.5"
         >
           <FormTextarea
             id="title"
-            onKeyDown={() => {}}
+            onKeyDown={onTextareakeyDown}
             ref={ref}
             placeholder="Enter a title for this card..."
+            errors={fieldErrors}
           />
           <input hidden id="listId" name="listId" defaultValue={listId} />
           <div className="flex items-center gap-x-1">
